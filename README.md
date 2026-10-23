@@ -22,7 +22,7 @@
 
 不想敲命令行？本项目配套两套**可直接交互**的可视化界面，底层共用同一套确定性优化器（与 Python 自测结果完全一致）：
 
-- **H5 网页版**（`app/`）：手机浏览器直接打开，点选餐品 → 实时算最省组合，支持「点名最省」「预算内最值」两种模式。在微信里也能打开，适合分享冲 Star。🌐 在线体验：[mc-saving.app.workbuddy.host](https://mc-saving.app.workbuddy.host/?sharecode=WTUKK3ABZT)
+- **H5 网页版**（`app/`）：手机浏览器直接打开，点选餐品 → 实时算最省组合。在微信里也能打开，适合分享冲 Star。🌐 在线体验：[mc-saving.app.workbuddy.host](https://mc-saving.app.workbuddy.host/?sharecode=WTUKK3ABZT)
 - **微信小程序**（`miniprogram/`）：用微信开发者工具导入即可预览/发布，界面与 H5 一致。
 
 <p align="center">
@@ -57,7 +57,6 @@ python3 -m http.server 8080
 ## 它能做什么
 
 - **点名模式**："我要巨无霸+薯条+可乐，怎么点最便宜？" → 在包含你点名单品的前提下，套用最优券组合。
-- **预算模式**："30 块在麦当劳能吃到最丰盛的一餐？" → 在预算内筛出最值搭配：券后总价尽量贴近预算、吃得丰盛、还省得多（预算越高，方案越丰盛）。
 - **省钱解释**：讲清省了多少、用了哪张券、为什么这么搭。
 - **闭环核价**：下单前用麦当劳 MCP 的 `calculate-price` 复核，确保"说的价 = 收银台的价"。
 
@@ -89,9 +88,8 @@ python3 -m http.server 8080
 仓库已附带离线样例 `optimizer/demo_meals.json` 与 `optimizer/demo_coupons.json`，可直接复现上面的截图：
 ```bash
 cd optimizer
-python optimizer.py --selftest                                                              # 10 项自测（截图上半部分）
+python optimizer.py --selftest                                                              # 8 项自测（截图上半部分）
 python optimizer.py --meals demo_meals.json --coupons demo_coupons.json --wishlist "big_mac,mid_fries,mid_coke"   # 点名最省
-python optimizer.py --meals demo_meals.json --coupons demo_coupons.json --budget 30          # 预算内最值
 ```
 > 真实使用时，`meals.json` 来自 MCP `query-meals`（需 `storeCode`），`coupons.json` 来自 `auto-bind-coupons` / `available-coupons` / `query-my-coupons` / `query-store-coupons` 四路合并（前三路无需 `storeCode`）。
 
@@ -143,7 +141,7 @@ mc-saving/
     ├── sample_data.py          # 离线样例菜单与券
     ├── demo_meals.json         # 离线样例菜单（截图演示用 fixtures）
     ├── demo_coupons.json       # 离线样例券池（截图演示用 fixtures）
-    ├── selftest.py             # 10 项自测
+    ├── selftest.py             # 8 项自测
     ├── mcp_client.py           # 最小化麦当劳 MCP 客户端（纯标准库）
     └── live_proof.py           # 真实取数 → 优化器 端到端演示
 ```

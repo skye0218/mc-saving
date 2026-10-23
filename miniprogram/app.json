@@ -1,0 +1,11 @@
+{
+  "pages": ["pages/index/index"],
+  "window": {
+    "navigationBarBackgroundColor": "#da291c",
+    "navigationBarTitleText": "Mc. Saving",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#fff7ec"
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

@@ -99,7 +99,6 @@
       t.classList.add("active");
       var tab = t.getAttribute("data-tab");
       document.getElementById("panel-wish").classList.toggle("hidden", tab !== "wish");
-      document.getElementById("panel-budget").classList.toggle("hidden", tab !== "budget");
     });
   });
 
@@ -296,27 +295,4 @@
     if (e.target === this) closeModal();
   });
 
-  // 预算内最值
-  document.getElementById("btn-budget").addEventListener("click", function () {
-    var b = parseFloat(document.getElementById("budget-input").value);
-    if (!(b > 0)) { alert("请输入有效预算"); return; }
-    var plans = M.budgetCombos(menu, coupons, b, 3);
-    var box = document.getElementById("budget-result");
-    if (!plans.length) { box.innerHTML = '<div class="hint">该预算内没有可组的搭配，试试调高预算。</div>'; return; }
-    box.innerHTML = plans.map(function (p, i) {
-      var names = M.planLines(p, menu).map(function (l) {
-        return l.name + (l.gift ? "(赠)" : "");
-      }).join(" + ");
-      var used = (p.usedCoupons || []).map(function (id) {
-        return couponMap[id] ? couponMap[id].desc : id;
-      }).join("、");
-      return (
-        '<div class="bcard">' +
-          '<div class="bt">方案 ' + (i + 1) + ' · 实付 ¥' + p.total.toFixed(2) + "</div>" +
-          '<div class="blines">' + names + "</div>" +
-          '<div class="bsave">省 ¥' + p.saved.toFixed(2) + "　已用：" + (used || "无") + "</div>" +
-        "</div>"
-      );
-    }).join("");
-  });
 })();

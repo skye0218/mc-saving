@@ -17,7 +17,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(__file__))
 from mcp_client import initialize, call_tool, _post
-from optimizer import Item, Coupon, cheapest_for_wishlist, budget_combos, cart_readable
+from optimizer import Item, Coupon, cheapest_for_wishlist, cart_readable
 
 
 def parse_my_coupons(markdown: str):
@@ -113,10 +113,6 @@ def main():
     p = cheapest_for_wishlist(["wings_a", "wings_b"], menu, coupons)[0]
     lines.append(cart_readable(p, menu))
     lines.append("")
-    lines.append("### 场景 C：预算 ¥35，最省优先 Top 3")
-    for pl in budget_combos(menu, coupons, 35.0, 3):
-        lines.append(cart_readable(pl, menu))
-        lines.append("")
 
     lines.append("---")
     lines.append("> 说明：菜单项名为公开在售品、价为近似值；券池为真实从麦当劳 MCP 拉取，")

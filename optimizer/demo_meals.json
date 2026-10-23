@@ -1,0 +1,85 @@
+{
+  "meals": [
+    {
+      "code": "big_mac",
+      "name": "巨无霸",
+      "price": 24.5,
+      "tags": [
+        "汉堡",
+        "人气"
+      ]
+    },
+    {
+      "code": "filet_o_fish",
+      "name": "麦香鱼",
+      "price": 21.0,
+      "tags": [
+        "汉堡"
+      ]
+    },
+    {
+      "code": "mc_chicken",
+      "name": "麦辣鸡腿堡",
+      "price": 22.0,
+      "tags": [
+        "汉堡"
+      ]
+    },
+    {
+      "code": "mid_fries",
+      "name": "中薯条",
+      "price": 12.0,
+      "tags": [
+        "小食"
+      ]
+    },
+    {
+      "code": "mc_nuggets_4",
+      "name": "麦乐鸡(4块)",
+      "price": 13.0,
+      "tags": [
+        "小食"
+      ]
+    },
+    {
+      "code": "mid_coke",
+      "name": "中杯可乐",
+      "price": 10.5,
+      "tags": [
+        "饮料"
+      ]
+    },
+    {
+      "code": "mid_sprite",
+      "name": "中杯雪碧",
+      "price": 10.5,
+      "tags": [
+        "饮料"
+      ]
+    },
+    {
+      "code": "corn_cup",
+      "name": "玉米杯",
+      "price": 9.5,
+      "tags": [
+        "小食"
+      ]
+    },
+    {
+      "code": "egg_tart",
+      "name": "葡式蛋挞",
+      "price": 8.0,
+      "tags": [
+        "甜品"
+      ]
+    },
+    {
+      "code": "hash_brown",
+      "name": "脆薯饼",
+      "price": 7.0,
+      "tags": [
+        "早餐"
+      ]
+    }
+  ]
+}

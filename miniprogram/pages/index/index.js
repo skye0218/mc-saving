@@ -1,6 +1,13 @@
 const M = require("../../utils/optimizer.js");
 const D = require("../../utils/sample_data.js");
 
+// —— 下单跳转目标（按需替换）——
+// 麦当劳官方小程序 AppID（金拱门(中国)有限公司）。正式跳转前请替换为真实 AppID，
+// 并在本小程序后台「开发 → 开发管理 → 配置」把官方 AppID 加入 navigateToMiniProgramAppIdList。
+const MCD_OFFICIAL_APPID = "wxMCD_OFFICIAL_APPID";
+// 官方小程序「点餐/下单确认」页面路径（按官方实际路径替换）。
+const MCD_ORDER_PATH = "pages/index/index";
+
 Page({
   data: {
     menuList: [],
@@ -137,5 +144,28 @@ Page({
       return { idx: i + 1, total: p.total.toFixed(2), names: names, saved: p.saved.toFixed(2), used: used || "无" };
     });
     this.setData({ budgetResult: list });
+  },
+
+  // 下单：复制清单并尝试跳转到麦当劳官方小程序
+  goOrder() {
+    const r = this.data.result;
+    if (!r) return;
+    const lines = r.lines.map((l) => "· " + l.name + (l.qty > 1 ? " ×" + l.qty : "") +
+      (l.gift ? "（赠品）" : " ¥" + l.price));
+    const text = "【Mc. Saving 最优下单清单】\n" + lines.join("\n") +
+      "\n应付：¥" + r.total + "（省 ¥" + r.saved + "）\n已用券：" + r.used +
+      "\n请到麦当劳官方小程序按此清单点单。";
+    wx.setClipboardData({ data: text });
+    wx.navigateToMiniProgram({
+      appId: MCD_OFFICIAL_APPID,
+      path: MCD_ORDER_PATH,
+      fail: () => {
+        wx.showModal({
+          title: "跳转提示",
+          content: "已复制下单清单。请在微信搜索『麦当劳』官方小程序，按清单点单并使用算好的券。\n（跳转需在本小程序后台将麦当劳官方 AppID 加入 navigateToMiniProgramAppIdList）",
+          showCancel: false
+        });
+      }
+    });
   }
 });

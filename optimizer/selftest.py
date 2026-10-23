@@ -54,23 +54,23 @@ def run():
 
     # 1) 单品原价正确
     cart = {"big_mac": 1}
-    price, used, gifts = _price_with_coupons(cart, menu, coupons)
+    price, used, gifts, _, _ = _price_with_coupons(cart, menu, coupons)
     check("巨无霸原价=24.50", price == 24.50)
 
     # 2) 赠品逻辑：买巨无霸应得到免费脆薯饼
-    price, used, gifts = _price_with_coupons(cart, menu, coupons)
+    price, used, gifts, _, _ = _price_with_coupons(cart, menu, coupons)
     check("买巨无霸送脆薯饼(gift)", "hash_brown" in gifts)
 
     # 3) 1+1 随心配：巨无霸+中薯条 直选 36.5，组合价应降到 13.9 附近
     cart = {"big_mac": 1, "mid_fries": 1}
     base = menu["big_mac"].price + menu["mid_fries"].price  # 36.5
-    price, used, gifts = _price_with_coupons(cart, menu, coupons)
+    price, used, gifts, _, _ = _price_with_coupons(cart, menu, coupons)
     check("组合价低于直选(base=36.5)", price < base - 1)
     check("组合价使用了 bundle_11", "bundle_11" in used)
 
     # 4) 不可叠加券：item_coke_99 与 bundle 互斥，单独使用时中杯可乐=9.9
     cart = {"mid_coke": 1}
-    price, used, gifts = _price_with_coupons(cart, menu, coupons)
+    price, used, gifts, _, _ = _price_with_coupons(cart, menu, coupons)
     check("中杯可乐单品券后=9.9", price == 9.90)
 
     # 5) wishlist 方案生成

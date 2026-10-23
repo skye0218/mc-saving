@@ -1,0 +1,95 @@
+<view class="app">
+  <view class="hd">
+    <view class="logo">🍔 Mc. Saving</view>
+    <view class="sub">接麦当劳官方 MCP · 算出点到最低价的组合</view>
+  </view>
+
+  <view class="tabs">
+    <view class="tab {{activeTab==='wish'?'active':''}}" data-tab="wish" bindtap="switchTab">点名最省</view>
+    <view class="tab {{activeTab==='budget'?'active':''}}" data-tab="budget" bindtap="switchTab">预算内最值</view>
+  </view>
+
+  <!-- 点名模式 -->
+  <view class="panel" wx:if="{{activeTab==='wish'}}">
+    <view class="hint">勾选你想吃的，一键算「用哪几张券最便宜」。</view>
+    <view class="quick">
+      <view class="mini" bindtap="selectAll">全选</view>
+      <view class="mini" bindtap="clearAll">清空</view>
+    </view>
+    <scroll-view class="cats" scroll-x="true">
+      <view class="cat {{currentCat===item.key?'active':''}}" wx:for="{{catList}}" wx:key="key"
+            data-cat="{{item.key}}" bindtap="switchCat">{{item.name}}</view>
+    </scroll-view>
+    <view class="grid">
+      <view class="item {{item.sel?'sel':''}}" wx:for="{{showList}}" wx:key="code"
+            data-code="{{item.code}}" bindtap="toggleItem">
+        <view class="chk"></view>
+        <view class="nm">{{item.name}}</view>
+        <view class="pr">¥{{item.price}}</view>
+        <view class="tg">
+          <text class="tag" wx:for="{{item.tags}}" wx:for-item="t" wx:key="*this">{{t}}</text>
+        </view>
+      </view>
+    </view>
+    <view class="cta" bindtap="computeWish">算最省组合</view>
+  </view>
+
+  <!-- 预算模式 -->
+  <view class="panel" wx:if="{{activeTab==='budget'}}">
+    <view class="hint">设定预算上限，找出「最超值」的搭配（按省得最多排序）。</view>
+    <view class="budget-row">
+      <text class="yen">¥</text>
+      <input class="binput" type="digit" value="{{budget}}" bindinput="onBudgetInput" />
+      <view class="cta inline" bindtap="computeBudget">找最值搭配</view>
+    </view>
+    <view wx:for="{{budgetResult}}" wx:key="idx" class="bcard">
+      <view class="bt">方案 {{item.idx}} · 实付 ¥{{item.total}}</view>
+      <view class="blines">{{item.names}}</view>
+      <view class="bsave">省 ¥{{item.saved}}　已用：{{item.used}}</view>
+    </view>
+    <view wx:if="{{budgetResult.length===0}}" class="hint">点上方按钮生成方案。</view>
+  </view>
+
+  <!-- 可用优惠券 -->
+  <view class="panel">
+    <view class="sec-title">🎟️ 可用优惠券（内置真实样例）</view>
+    <view class="coupons">
+      <view class="coupon" wx:for="{{couponList}}" wx:key="desc">
+        <text class="badge">{{kindName[item.kind]}}</text>
+        <text class="cd">{{item.desc}}</text>
+        <text class="stk {{item.stackable?'':'nostk'}}">{{item.stackable?'可叠加':'不可叠加'}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 结果 -->
+  <view class="panel" wx:if="{{result}}">
+    <view class="sec-title">✅ 最优方案</view>
+    <view class="total-box">
+      <view class="lbl">最优应付</view>
+      <view class="pay">¥{{result.total}}</view>
+      <view class="save">直购 ¥{{result.base}} · 立省 ¥{{result.saved}}</view>
+    </view>
+    <view class="r-line" wx:for="{{result.lines}}" wx:key="name">
+      <text class="{{item.gift?'gift':''}}">{{item.gift?'🎁 ':''}}{{item.name}} ×{{item.qty}}</text>
+      <text class="price">{{item.gift?'免费':'¥'+item.price}}</text>
+    </view>
+    <view class="r-coupons">已用券：<text class="rb">{{result.used}}</text></view>
+
+    <view class="r-explain">
+      <view class="ex-title">🧮 计算说明</view>
+      <view wx:if="{{result.explain.length === 0}}" class="ex-note">本方案未使用优惠券，已直接按菜单原价 ¥{{result.base}} 结算；算法共比较了 {{result.tried}} 种券组合，均无更低价。</view>
+      <block wx:else>
+        <view class="ex-row {{item.gift ? 'gift' : ''}}" wx:for="{{result.explain}}" wx:key="label">
+          <text class="ex-lbl">{{item.gift ? '🎁 ' : ''}}{{item.label}}</text>
+          <text class="ex-detail">{{item.detail}}</text>
+          <text class="ex-flow" wx:if="{{!item.gift}}">¥{{item.before}} → <text class="b">¥{{item.after}}</text></text>
+          <text class="ex-save" wx:if="{{!item.gift}}">省¥{{item.saved}}</text>
+        </view>
+        <view class="ex-note">算法对 {{result.tried}} 种可叠加券组合做了完整枚举，不可叠加券单独比对；并按「单品改价 → 组合价 → 折扣 → 满减」顺序结算（赠品只送不扣款），最终取应付最低且赠品最多的方案。</view>
+      </block>
+    </view>
+  </view>
+
+  <view class="ft">取数交给 MCP，算术交给代码。本页为参赛演示，菜单/券为脱敏样例数据。</view>
+</view>

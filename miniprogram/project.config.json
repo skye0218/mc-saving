@@ -1,0 +1,14 @@
+{
+  "description": "Mc. Saving · 麦当劳省钱精算小程序（麦当劳程序员创意开发大赛参赛项目）",
+  "miniprogramRoot": "./",
+  "appid": "touristappid",
+  "projectname": "mc-saving",
+  "setting": {
+    "urlCheck": false,
+    "es6": true,
+    "enhance": true,
+    "postcss": true,
+    "minified": true
+  },
+  "compileType": "miniprogram"
+}

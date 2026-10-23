@@ -12,12 +12,17 @@
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
+/* 锁定字体缩放：防止微信「字体大小」设置把页面文字放大撑破布局 */
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+
 body {
   margin: 0;
   font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
   background: var(--bg);
   color: var(--ink);
   line-height: 1.5;
+  /* 底部安全区：避开 iOS 微信底部 home indicator 等 */
+  padding-bottom: env(safe-area-inset-bottom, 0);
 }
 
 .app {
@@ -31,7 +36,8 @@ body {
   background: linear-gradient(135deg, var(--red), var(--red-d));
   color: #fff;
   margin: 0 -14px 14px;
-  padding: 20px 18px 18px;
+  /* 顶部安全区：避开刘海/状态栏，红色 Header 不被压 */
+  padding: calc(20px + env(safe-area-inset-top, 0)) 18px 18px;
   border-radius: 0 0 22px 22px;
   box-shadow: 0 6px 18px rgba(218, 41, 28, .25);
 }
@@ -72,9 +78,11 @@ body {
 }
 .cat.active { background: var(--red); color: #fff; border-color: var(--red); }
 
-/* Menu grid */
-.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+/* Menu grid —— 用 flex 而非 grid，兼容老版微信 X5 内核（grid 会退化成一整列） */
+.grid { display: flex; flex-wrap: wrap; justify-content: space-between; }
 .item {
+  width: 48%;
+  margin-bottom: 10px;
   border: 2px solid var(--line); border-radius: 14px; padding: 10px 11px;
   cursor: pointer; position: relative; transition: .15s; background: #fff;
 }
@@ -183,13 +191,14 @@ body {
 
 /* 跳转弹层 */
 .modal-mask {
-  position: fixed; inset: 0; background: rgba(0,0,0,.45);
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,.45);
   display: flex; align-items: flex-end; justify-content: center; z-index: 50;
 }
 .modal-mask.hidden { display: none; }
 .modal {
   background: #fff; width: 100%; max-width: 480px;
-  border-radius: 20px 20px 0 0; padding: 20px 18px 26px; position: relative;
+  border-radius: 20px 20px 0 0;
+  padding: 20px 18px calc(26px + env(safe-area-inset-bottom, 0)); position: relative;
   animation: modalUp .2s ease;
 }
 @keyframes modalUp { from { transform: translateY(40px); opacity: .6; } to { transform: translateY(0); opacity: 1; } }

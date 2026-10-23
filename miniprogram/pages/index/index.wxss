@@ -137,3 +137,13 @@
 
 /* Footer */
 .ft { text-align: center; font-size: 21rpx; color: #8a8a8a; margin-top: 10rpx; }
+
+/* 下单卡片 */
+.order-card { margin-top: 24rpx; border-top: 1rpx dashed #f0e4d2; padding-top: 20rpx; }
+.order-card .o-lines { border-bottom: 1rpx solid #f0e4d2; padding-bottom: 10rpx; }
+.o-line { display: flex; justify-content: space-between; padding: 10rpx 4rpx; font-size: 27rpx; }
+.o-line .price { font-weight: 700; }
+.o-total { font-size: 26rpx; margin-top: 14rpx; }
+.o-total .b { color: #da291c; font-size: 38rpx; font-weight: 900; }
+.o-coupons { font-size: 23rpx; color: #8a8a8a; margin-top: 10rpx; }
+.order-tip { font-size: 21rpx; color: #8a8a8a; margin-top: 12rpx; line-height: 1.5; }

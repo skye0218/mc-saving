@@ -76,11 +76,10 @@ text(W - 20, 23, "Mc. Saving", size=12, fill="#fff", anchor="end")
 rect(0, 34, W, 96, fill="#da291c")
 text(22, 82, "🍔 Mc. Saving", size=26, fill="#fff", weight="800")
 text(22, 108, "接麦当劳官方 MCP · 算出点到最低价的组合", size=12, fill="#ffe")
-# Tabs
-rect(16, 142, 178, 40, fill="#ffc72c", rx=12)
-text(105, 167, "点名最省", size=15, fill="#2b2b2b", weight="700", anchor="middle")
-rect(196, 142, 178, 40, fill="#fff", stroke="#eee", rx=12)
-text(285, 167, "预算内最值", size=15, fill="#8a8a8a", weight="700", anchor="middle")
+# Tabs（仅保留「点名最省」单模式）
+tab_w = W - 32
+rect(16, 142, tab_w, 40, fill="#ffc72c", rx=12)
+text(16 + tab_w / 2, 167, "点名最省", size=15, fill="#2b2b2b", weight="700", anchor="middle")
 # Hint
 text(22, 206, "勾选你想吃的，一键算「用哪几张券最便宜」。", size=12, fill="#8a8a8a")
 # 全选/清空

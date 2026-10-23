@@ -17,7 +17,6 @@
 
     <nav class="tabs">
       <button class="tab active" data-tab="wish">点名最省</button>
-      <button class="tab" data-tab="budget">预算内最值</button>
     </nav>
 
     <!-- 点名模式 -->
@@ -30,17 +29,6 @@
       <div class="cats" id="cat-tabs"></div>
       <div class="grid" id="menu-grid"></div>
       <button class="cta" id="btn-wish">算最省组合</button>
-    </section>
-
-    <!-- 预算模式 -->
-    <section class="panel hidden" id="panel-budget">
-      <div class="hint">设定预算上限，在预算内尽量花得值：券后总价贴近预算、吃得丰盛、还省得多（预算越高，方案越丰盛）。</div>
-      <div class="budget-row">
-        <span class="yen">¥</span>
-        <input id="budget-input" type="number" min="1" step="1" value="20" inputmode="numeric" />
-        <button class="cta inline" id="btn-budget">找最值搭配</button>
-      </div>
-      <div id="budget-result"></div>
     </section>
 
     <!-- 可用优惠券 -->

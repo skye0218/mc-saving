@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Mc. Saving · 麦当劳省钱精算</title>
+  <link rel="stylesheet" href="app.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="hd">
+      <div class="logo">🍔 Mc. Saving</div>
+      <div class="sub">接麦当劳官方 MCP · 算出点到最低价的组合</div>
+    </header>
+
+    <nav class="tabs">
+      <button class="tab active" data-tab="wish">点名最省</button>
+      <button class="tab" data-tab="budget">预算内最值</button>
+    </nav>
+
+    <!-- 点名模式 -->
+    <section class="panel" id="panel-wish">
+      <div class="hint">勾选你想吃的，一键算「用哪几张券最便宜」。</div>
+      <div class="quick">
+        <button class="mini" id="btn-all">全选</button>
+        <button class="mini" id="btn-clear">清空</button>
+      </div>
+      <div class="cats" id="cat-tabs"></div>
+      <div class="grid" id="menu-grid"></div>
+      <button class="cta" id="btn-wish">算最省组合</button>
+    </section>
+
+    <!-- 预算模式 -->
+    <section class="panel hidden" id="panel-budget">
+      <div class="hint">设定预算上限，找出「最超值」的搭配（按省得最多排序）。</div>
+      <div class="budget-row">
+        <span class="yen">¥</span>
+        <input id="budget-input" type="number" min="1" step="1" value="20" inputmode="numeric" />
+        <button class="cta inline" id="btn-budget">找最值搭配</button>
+      </div>
+      <div id="budget-result"></div>
+    </section>
+
+    <!-- 可用优惠券 -->
+    <section class="panel">
+      <div class="sec-title">🎟️ 可用优惠券（内置真实样例）</div>
+      <div class="coupons" id="coupon-list"></div>
+    </section>
+
+    <!-- 结果 -->
+    <section class="panel hidden" id="result-panel">
+      <div class="sec-title">✅ 最优方案</div>
+      <div id="result"></div>
+    </section>
+
+    <footer class="ft">
+      取数交给 MCP，算术交给代码。本页为参赛演示，菜单/券为脱敏样例数据。
+    </footer>
+  </div>
+
+  <script src="optimizer.js"></script>
+  <script src="sample_data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

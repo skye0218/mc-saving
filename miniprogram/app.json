@@ -7,5 +7,6 @@
     "backgroundColor": "#fff7ec"
   },
   "style": "v2",
-  "sitemapLocation": "sitemap.json"
+  "sitemapLocation": "sitemap.json",
+  "navigateToMiniProgramAppIdList": ["wxMCD_OFFICIAL_APPID"]
 }

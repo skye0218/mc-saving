@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="390" height="1300" viewBox="0 0 390 1300" font-family="-apple-system,PingFang SC,Microsoft YaHei,Arial">
-<rect x="0" y="0" width="390" height="1300" rx="36" fill="#fff" stroke="#e4ddcf" stroke-width="2"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="390" height="1620" viewBox="0 0 390 1620" font-family="-apple-system,PingFang SC,Microsoft YaHei,Arial">
+<rect x="0" y="0" width="390" height="1620" rx="36" fill="#fff" stroke="#e4ddcf" stroke-width="2"/>
 <rect x="0" y="0" width="390" height="34" rx="36" fill="#da291c"/>
 <text x="20" y="23" fill="#fff" font-size="13" font-weight="700" text-anchor="start">9:41</text>
 <text x="370" y="23" fill="#fff" font-size="12" font-weight="400" text-anchor="end">Mc. Saving</text>
@@ -105,4 +105,16 @@
 <text x="32" y="1212" fill="#2e9e5b" font-size="12.5" font-weight="700" text-anchor="start">🎁 赠品（免费，不计入应付）</text>
 <text x="32" y="1236" fill="#8a8a8a" font-size="11.5" font-weight="400" text-anchor="start">算法枚举 17 种券组合，按『单品改价→组合价→折扣→满减』结算；</text>
 <text x="32" y="1254" fill="#8a8a8a" font-size="11.5" font-weight="400" text-anchor="start">取应付最低且赠品最多的方案。</text>
+<text x="16" y="1286" fill="#2b2b2b" font-size="15" font-weight="800" text-anchor="start">🛒 带着最优方案去下单</text>
+<text x="32" y="1332" fill="#2b2b2b" font-size="13.5" font-weight="400" text-anchor="start">巨无霸 ×1</text>
+<text x="356" y="1332" fill="#2b2b2b" font-size="13.5" font-weight="400" text-anchor="end">¥24.50</text>
+<text x="32" y="1358" fill="#2b2b2b" font-size="13.5" font-weight="400" text-anchor="start">中薯条 ×1</text>
+<text x="356" y="1358" fill="#2b2b2b" font-size="13.5" font-weight="400" text-anchor="end">¥12.00</text>
+<text x="32" y="1384" fill="#2b2b2b" font-size="13.5" font-weight="400" text-anchor="start">中杯可乐 ×1</text>
+<text x="356" y="1384" fill="#2b2b2b" font-size="13.5" font-weight="400" text-anchor="end">¥10.50</text>
+<text x="32" y="1410" fill="#2e9e5b" font-size="13.5" font-weight="700" text-anchor="start">🎁 脆薯饼 ×1（免费）</text>
+<text x="32" y="1436" fill="#8a8a8a" font-size="12" font-weight="400" text-anchor="start">应付 ¥31.40 · 省 ¥15.60 · 已用券：1+1随心配、满35减7、送脆薯饼</text>
+<rect x="16" y="1452" width="358" height="46" rx="14" fill="#da291c"/>
+<text x="195" y="1481" fill="#fff" font-size="15" font-weight="800" text-anchor="middle">去麦当劳官方小程序下单确认</text>
+<text x="16" y="1516" fill="#8a8a8a" font-size="11" font-weight="400" text-anchor="start">跳转后按此清单点单，并使用上方算好的券。</text>
 </svg>

@@ -178,14 +178,19 @@
   function budgetCombos(menu, coupons, budget, topN) {
     topN = topN || 5;
     var codes = Object.keys(menu);
+    // 放宽到 4 件（每种至多 1 份），让大预算也能「加量加菜」，而不是永远返回同一个 3 件套餐
+    var maxItems = 4;
+    if (codes.length < maxItems) maxItems = codes.length;
     var candidates = [];
-    codes.forEach(function (code) { var o = {}; o[code] = 1; candidates.push(o); });
-    combinations(codes, 2).forEach(function (pair) {
-      var o = {}; o[pair[0]] = 1; o[pair[1]] = 1; candidates.push(o);
-    });
-    combinations(codes, 3).forEach(function (triple) {
-      var o = {}; triple.forEach(function (c) { o[c] = 1; }); candidates.push(o);
-    });
+    for (var d = 1; d <= maxItems; d++) {
+      if (d === 1) {
+        codes.forEach(function (code) { var o = {}; o[code] = 1; candidates.push(o); });
+      } else {
+        combinations(codes, d).forEach(function (grp) {
+          var o = {}; grp.forEach(function (c) { o[c] = 1; }); candidates.push(o);
+        });
+      }
+    }
     var plans = [];
     candidates.forEach(function (cart) {
       var r = priceWithCoupons(cart, menu, coupons);
@@ -196,7 +201,13 @@
         plans.push({ cart: cart, total: r[0], usedCoupons: r[1], gifts: r[2], saved: saved, steps: r[3], tried: r[4] });
       }
     });
-    plans.sort(function (a, b) { return b.saved - a.saved; });
+    // 「预算内最值」语义：在预算内尽量把这笔钱花得值——
+    //   1) 券后总价尽量贴近预算（不浪费、吃得丰盛）；2) 同档下省得越多越靠前；3) 件数更多优先
+    plans.sort(function (a, b) {
+      return (b.total - a.total) ||
+             (b.saved - a.saved) ||
+             (Object.keys(b.cart).length - Object.keys(a.cart).length);
+    });
     return plans.slice(0, topN);
   }
 

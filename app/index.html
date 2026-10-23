@@ -53,9 +53,30 @@
       <div id="result"></div>
     </section>
 
+    <!-- 下单 -->
+    <section class="panel hidden" id="order-panel">
+      <div class="sec-title">🛒 带着最优方案去下单</div>
+      <div id="order-summary"></div>
+      <button class="cta" id="btn-order">去麦当劳官方小程序下单确认</button>
+      <div class="order-tip">跳转后在官方小程序按此清单点单，并使用上方算好的券。</div>
+    </section>
+
     <footer class="ft">
       取数交给 MCP，算术交给代码。本页为参赛演示，菜单/券为脱敏样例数据。
     </footer>
+  </div>
+
+  <!-- 下单跳转弹层 -->
+  <div class="modal-mask hidden" id="order-modal">
+    <div class="modal">
+      <button class="modal-close" id="modal-close">×</button>
+      <div class="modal-title">📲 跳转麦当劳官方小程序</div>
+      <div class="modal-body" id="modal-body"></div>
+      <div class="modal-actions">
+        <button class="m-btn ghost" id="modal-copy">复制下单清单</button>
+        <button class="m-btn primary" id="modal-open">打开小程序</button>
+      </div>
+    </div>
   </div>
 
   <script src="optimizer.js"></script>

@@ -81,6 +81,8 @@ class Plan:
     total: float                # 应付总价（含券后）
     used_coupons: List[str]     # 使用的优惠券 id
     gifts: List[str] = field(default_factory=list)  # 赠送单品 code
+    steps: List[dict] = field(default_factory=list)  # 逐步结算明细（解释"怎么算出来的"）
+    tried: int = 0                                   # 枚举过的券组合数
     note: str = ""
 
 
@@ -134,8 +136,9 @@ def _price_with_coupons(cart: Dict[str, int], menu: Dict[str, Item],
     best_gift_count = 0
     best_used: List[str] = []
     best_gifts: List[str] = []
+    best_steps: List[dict] = []
     for cs in candidate_sets:
-        price, gifts = _apply(cart, menu, cs, base_total)
+        price, gifts, steps = _apply(cart, menu, cs, base_total)
         price = round2(price)
         # 价格更优则更新；价格相同则优先"白拿赠品"的方案（gifts 更多）
         if (price < best_price - 1e-9) or (
@@ -144,20 +147,32 @@ def _price_with_coupons(cart: Dict[str, int], menu: Dict[str, Item],
             best_gift_count = len(gifts)
             best_used = [c.coupon_id for c in cs]
             best_gifts = gifts
-    return (best_price, best_used, best_gifts)
+            best_steps = steps
+    return (best_price, best_used, best_gifts, best_steps, len(candidate_sets))
 
 
 def _apply(cart: Dict[str, int], menu: Dict[str, Item], cs: List[Coupon],
-           base_total: float) -> (float, List[str]):
-    """按顺序应用一组券：单品改价 -> 组合价 -> 折扣 -> 满减。"""
-    # 1) 单品改价：每个单品取可适用的最低改价
+           base_total: float) -> (float, List[str], List[dict]):
+    """按顺序应用一组券：单品改价 -> 组合价 -> 折扣 -> 满减，并返回逐步明细。"""
     adjusted_unit: Dict[str, float] = {code: menu[code].price for code in cart}
+    steps: List[dict] = []
+    running = base_total
+    # 1) 单品改价：每个单品取可适用的最低改价
     for c in cs:
         if c.kind == "item_price" and c.target in adjusted_unit:
-            adjusted_unit[c.target] = min(adjusted_unit[c.target], c.fixed)
-
-    subtotal = sum(adjusted_unit[code] * qty for code, qty in cart.items())
-
+            old_u = adjusted_unit[c.target]
+            new_u = min(old_u, c.fixed)
+            if new_u < old_u - 1e-9:
+                qty = cart.get(c.target, 0)
+                before = running
+                adjusted_unit[c.target] = new_u
+                running = sum(adjusted_unit[code] * q for code, q in cart.items())
+                steps.append({"label": "单品改价",
+                              "detail": f"{menu[c.target].name} 单价 ¥{old_u:.2f} → ¥{new_u:.2f}（×{qty}）",
+                              "before": round2(before), "after": round2(running),
+                              "saved": round2((old_u - new_u) * qty)})
+    # 用最新单价重算基准小计（无单品改价时等价于 base_total）
+    running = sum(adjusted_unit[code] * q for code, q in cart.items())
     # 2) 组合价：从池中选取 min_count 件最便宜的参与组合（贪心）
     bundle_coupons = [c for c in cs if c.kind == "bundle_price"]
     consumed: Dict[str, int] = {}
@@ -166,31 +181,47 @@ def _apply(cart: Dict[str, int], menu: Dict[str, Item], cs: List[Coupon],
         pool = [i for i in (c.bundle_items or []) if (cart.get(i, 0) - consumed.get(i, 0)) > 0]
         if len(pool) < c.min_count:
             continue
-        # 取池中当前最便宜的 min_count 件
         pool.sort(key=lambda i: adjusted_unit[i])
         chosen = pool[:c.min_count]
         original = sum(adjusted_unit[i] for i in chosen)
-        subtotal += (c.bundle_price or 0) - original
+        delta = round2((c.bundle_price or 0) - original)
+        before = running
+        running += delta
+        names = " + ".join(f"{menu[i].name} ¥{adjusted_unit[i]:.2f}" for i in chosen)
+        steps.append({"label": c.desc,
+                      "detail": f"从券池任选最便宜的 {c.min_count} 件：{names} 改按组合价 ¥{(c.bundle_price or 0):.2f} 结算",
+                      "before": round2(before), "after": round2(running),
+                      "saved": round2(-delta)})
         for i in chosen:
             consumed[i] = consumed.get(i, 0) + 1
-
     # 3) 折扣（先于满减，基于折后金额，更保守）
     for c in cs:
         if c.kind == "percent":
-            subtotal *= (1 - (c.discount or 0))
-
+            before = running
+            running *= (1 - (c.discount or 0))
+            steps.append({"label": c.desc,
+                          "detail": f"小计 ¥{before:.2f} ×{1 - (c.discount or 0):.2f}（减 {(c.discount or 0) * 100:.0f}%）",
+                          "before": round2(before), "after": round2(running),
+                          "saved": round2(before - running)})
     # 4) 满减
     for c in cs:
-        if c.kind == "threshold" and subtotal >= (c.threshold or 0):
-            subtotal -= (c.reduce or 0)
-
+        if c.kind == "threshold" and running >= (c.threshold or 0):
+            before = running
+            running -= (c.reduce or 0)
+            steps.append({"label": c.desc,
+                          "detail": f"小计 ¥{before:.2f} ≥ 门槛 ¥{(c.threshold or 0):.2f}，立减 ¥{(c.reduce or 0):.2f}",
+                          "before": round2(before), "after": round2(running),
+                          "saved": round2(before - running)})
     # 5) 赠品（不影响应付，仅作为额外所得记录）
     for c in cs:
         if c.kind == "free_gift" and (c.target is None or c.target in cart):
             if c.gift:
                 gifts.append(c.gift)
-
-    return max(round2(subtotal), 0.0), gifts
+                steps.append({"label": "赠品",
+                              "detail": f"买 {menu[c.target].name if c.target else '任意单品'} 送 {menu[c.gift].name}（免费，不计入应付）",
+                              "before": round2(running), "after": round2(running),
+                              "saved": 0, "gift": True})
+    return max(round2(running), 0.0), gifts, steps
 
 
 # ---------------------------------------------------------------------------
@@ -203,9 +234,9 @@ def cheapest_for_wishlist(wishlist: List[str], menu: Dict[str, Item],
     cart = {code: 1 for code in wishlist if code in menu}
     if not cart:
         return []
-    total, used, gifts = _price_with_coupons(cart, menu, coupons)
-    plan = Plan(cart=cart, total=total, used_coupons=used, gifts=gifts,
-                note="已含你点名的全部单品，并在此基础上套用最优券组合")
+    total, used, gifts, steps, tried = _price_with_coupons(cart, menu, coupons)
+    plan = Plan(cart=cart, total=total, used_coupons=used, gifts=gifts, steps=steps,
+                tried=tried, note="已含你点名的全部单品，并在此基础上套用最优券组合")
     return [plan]
 
 
@@ -227,12 +258,13 @@ def budget_combos(menu: Dict[str, Item], coupons: List[Coupon],
 
     plans: List[Plan] = []
     for cart in candidates:
-        total, used, gifts = _price_with_coupons(cart, menu, coupons)
+        total, used, gifts, steps, tried = _price_with_coupons(cart, menu, coupons)
         if total <= budget + 1e-9:
             original = sum(menu[code].price * qty for code, qty in cart.items())
             saved = round2(original - total)
             plans.append(Plan(cart=cart, total=total, used_coupons=used,
-                             gifts=gifts, note=f"原价¥{original:.2f}，省¥{saved:.2f}"))
+                             gifts=gifts, steps=steps, tried=tried,
+                             note=f"原价¥{original:.2f}，省¥{saved:.2f}"))
     plans.sort(key=lambda p: _saved(p, menu), reverse=True)
     return plans[:top_n]
 

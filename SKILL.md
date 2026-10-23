@@ -1,6 +1,6 @@
 ---
 name: Mc. Saving
-description: 基于麦当劳 MCP 的"省钱/优惠精算助手"。当用户想在麦当劳点到最便宜的组合、问"XX 怎么点最划算""XX 预算能吃什么""帮我算最低价"时使用。它调用麦当劳 MCP 拉取实时菜单与四路券池，再用确定性优化器算出合规最低价，最后用 calculate-price 核价。绝不靠大模型口算价格。
+description: 基于麦当劳 MCP 的"省钱/优惠精算助手"。当用户想在麦当劳点到最便宜的组合、问"XX 怎么点最划算""帮我算最低价"时使用。它调用麦当劳 MCP 拉取实时菜单与四路券池，再用确定性优化器算出合规最低价，最后用 calculate-price 核价。绝不靠大模型口算价格。
 ---
 
 # Mc. Saving（McSaving）
@@ -45,12 +45,10 @@ description: 基于麦当劳 MCP 的"省钱/优惠精算助手"。当用户想�
    - `query-store-coupons`：当前门店专属券。
    合并去重后存为 `coupons.json`。
 4. **识别意图**：
-   - 点名单品（"我要巨无霸+薯条+可乐"）→ wishlist 模式；
-   - 预算约束（"30 块能吃什么""减脂期 800 大卡以内"）→ budget 模式（可用 `list-nutrition-foods` 拉营养数据做热量约束）。
+   - 点名单品（"我要巨无霸+薯条+可乐"）→ wishlist 模式。
 5. **算价（关键！不要自己算）**：把 `meals.json` + `coupons.json` 交给 `optimizer/optimizer.py`：
    ```
    python optimizer/optimizer.py --meals meals.json --coupons coupons.json --wishlist "big_mac,mid_fries,mid_coke"
-   python optimizer/optimizer.py --meals meals.json --coupons coupons.json --budget 30
    ```
    优化器会输出券后最低价方案。
 6. **核价（闭环）**：用 `calculate-price` 对选定方案做最终核价，确保"Agent 说的价 = 收银台的价"。若不一致，以 `calculate-price` 为准并重新解释。
@@ -70,4 +68,4 @@ description: 基于麦当劳 MCP 的"省钱/优惠精算助手"。当用户想�
 ```
 cd optimizer && python optimizer.py --selftest
 ```
-内置样例菜单与券，含 10 项断言，验证组合价、满减、折扣、赠品、预算模式与确定性。
+内置样例菜单与券，含 8 项断言，验证组合价、满减、折扣、赠品与确定性。

@@ -1,0 +1,53 @@
+{
+  "coupons": [
+    {
+      "id": "bundle_11",
+      "kind": "bundle_price",
+      "bundle_items": [
+        "big_mac",
+        "filet_o_fish",
+        "mc_chicken",
+        "mid_fries",
+        "mc_nuggets_4",
+        "mid_coke",
+        "mid_sprite"
+      ],
+      "min_count": 2,
+      "bundle_price": 13.9,
+      "stackable": true,
+      "desc": "1+1随心配 任选2件¥13.9"
+    },
+    {
+      "id": "pct_85",
+      "kind": "percent",
+      "discount": 0.15,
+      "min_spend": 30.0,
+      "stackable": true,
+      "desc": "麦麦省 满30元85折(减15%)"
+    },
+    {
+      "id": "full35_7",
+      "kind": "threshold",
+      "threshold": 35.0,
+      "reduce": 7.0,
+      "stackable": true,
+      "desc": "满35减7"
+    },
+    {
+      "id": "item_coke_99",
+      "kind": "item_price",
+      "target": "mid_coke",
+      "fixed": 9.9,
+      "stackable": false,
+      "desc": "中杯可乐¥9.9(不可叠加)"
+    },
+    {
+      "id": "gift_bigmac",
+      "kind": "free_gift",
+      "target": "big_mac",
+      "gift": "hash_brown",
+      "stackable": true,
+      "desc": "买巨无霸送脆薯饼"
+    }
+  ]
+}

@@ -48,7 +48,7 @@ def short_for(uid):
 
 # ---- 绘制 ----
 W = 390
-H = 1300
+H = 1620
 parts = []
 
 def rect(x, y, w, h, fill="#fff", stroke=None, sw=1, rx=14):
@@ -175,6 +175,24 @@ for s in plan.steps:
 text(32, ly, f"算法枚举 {plan.tried} 种券组合，按『单品改价→组合价→折扣→满减』结算；",
      size=11.5, fill="#8a8a8a")
 text(32, ly + 18, "取应付最低且赠品最多的方案。", size=11.5, fill="#8a8a8a")
+
+# 下单卡片
+oy = ly + 50
+text(16, oy, "🛒 带着最优方案去下单", size=15, fill="#2b2b2b", weight="800")
+oy += 28
+for c, q in plan.cart.items():
+    text(32, oy + 18, f"{menu[c].name} ×{q}", size=13.5, fill="#2b2b2b")
+    text(356, oy + 18, f"¥{menu[c].price:.2f}", size=13.5, fill="#2b2b2b", anchor="end")
+    oy += 26
+for g in plan.gifts:
+    text(32, oy + 18, f"🎁 {menu[g].name} ×1（免费）", size=13.5, fill="#2e9e5b", weight="700")
+    oy += 26
+text(32, oy + 18, f"应付 ¥{plan.total:.2f} · 省 ¥{saved:.2f} · 已用券：{used}", size=12, fill="#8a8a8a")
+oy += 34
+rect(16, oy, 358, 46, fill="#da291c", rx=14)
+text(195, oy + 29, "去麦当劳官方小程序下单确认", size=15, fill="#fff", weight="800", anchor="middle")
+oy += 64
+text(16, oy, "跳转后按此清单点单，并使用上方算好的券。", size=11, fill="#8a8a8a")
 
 parts.append("</svg>")
 

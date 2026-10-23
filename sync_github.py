@@ -7,11 +7,12 @@
 - 自动排除 .git / 本地 token 文件 / 临时文件
 用法：MCD_GH_PAT=xxx python3 sync_github.py
 """
-import os, sys, json, base64, urllib.request, urllib.error
+import os, sys, json, base64, time, urllib.request, urllib.error
 
 REPO = "skye0218/mc-saving"
 ROOT = os.path.dirname(os.path.abspath(__file__))
-EXCLUDE = {".git", ".mcd_token.local", ".gh_pat.local", ".gitignore.orig"}
+EXCLUDE = {".git", ".mcd_token.local", ".gh_pat.local", ".gitignore.orig", "sync_log.txt",
+            "__pycache__", ".gitignore"}
 
 def _read_local_token():
     p = os.path.join(ROOT, ".gh_pat.local")
@@ -29,14 +30,23 @@ def api(method, path, body=None):
     req.add_header("Authorization", f"Bearer {TOKEN}")
     req.add_header("Accept", "application/vnd.github+json")
     req.add_header("Content-Type", "application/json; charset=utf-8")
-    try:
-        with urllib.request.urlopen(req, timeout=60) as r:
-            return r.status, json.loads(r.read().decode("utf-8"))
-    except urllib.error.HTTPError as e:
+    last = None
+    for attempt in range(4):
         try:
-            return e.code, json.loads(e.read().decode("utf-8"))
-        except Exception:
-            return e.code, {}
+            with urllib.request.urlopen(req, timeout=60) as r:
+                return r.status, json.loads(r.read().decode("utf-8"))
+        except urllib.error.HTTPError as e:
+            # 终结性错误（如 404 创建、401 鉴权）直接返回，不重试
+            try:
+                return e.code, json.loads(e.read().decode("utf-8"))
+            except Exception:
+                return e.code, {}
+        except Exception as e:
+            last = e
+            if attempt < 3:
+                time.sleep(min(2 ** attempt, 8))
+    code = getattr(last, "code", 0) if hasattr(last, "code") else 0
+    return code, {}
 
 def main():
     if not TOKEN:
@@ -54,9 +64,19 @@ def main():
     for rel in files:
         full = os.path.join(ROOT, rel)
         with open(full, "rb") as f:
-            content = base64.b64encode(f.read()).decode("ascii")
+            local = f.read()
+        content = base64.b64encode(local).decode("ascii")
         status, resp = api("GET", rel)
         sha = resp.get("sha") if status == 200 else None
+        # 内容比对：远端已存在且内容一致则跳过（重传时大幅减少请求）
+        if sha and resp.get("content"):
+            try:
+                if base64.b64decode(resp["content"]) == local:
+                    print(f"  [相同] {rel}")
+                    ok += 1
+                    continue
+            except Exception:
+                pass
         msg = ("chore: 更新 " if sha else "add: ") + rel
         if sha:
             st, r = api("PUT", rel, {"message": msg, "content": content, "sha": sha, "branch": "main"})

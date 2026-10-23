@@ -89,6 +89,20 @@
         <view class="ex-note">算法对 {{result.tried}} 种可叠加券组合做了完整枚举，不可叠加券单独比对；并按「单品改价 → 组合价 → 折扣 → 满减」顺序结算（赠品只送不扣款），最终取应付最低且赠品最多的方案。</view>
       </block>
     </view>
+
+    <!-- 下单 -->
+    <view class="order-card">
+      <view class="o-lines">
+        <view class="o-line" wx:for="{{result.lines}}" wx:key="name">
+          <text>{{item.gift?'🎁 ':''}}{{item.name}}{{item.qty>1?' ×'+item.qty:''}}{{item.gift?'（赠）':''}}</text>
+          <text class="price">{{item.gift?'免费':'¥'+item.price}}</text>
+        </view>
+      </view>
+      <view class="o-total">应付 <text class="b">¥{{result.total}}</text> · 省 ¥{{result.saved}}</view>
+      <view class="o-coupons">已用券：{{result.used}}</view>
+      <view class="cta" bindtap="goOrder">去麦当劳官方小程序下单确认</view>
+      <view class="order-tip">跳转后按此清单点单，并使用上方算好的券。</view>
+    </view>
   </view>
 
   <view class="ft">取数交给 MCP，算术交给代码。本页为参赛演示，菜单/券为脱敏样例数据。</view>

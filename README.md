@@ -3,9 +3,40 @@
 > 取数交给 MCP，算术交给代码，表达交给 Agent。
 > 让每一单都点到麦当劳的最低价。
 
+<p align="center">
+  <img src="./demo_screenshot.svg" alt="Mc. Saving 真实跑通截图" width="720">
+</p>
+
+**它能替你省多少？** 实测：点"巨无霸 + 中薯条 + 中杯可乐"，直购 **¥47.00**，优化后 **¥31.40**，立省 **¥15.60**，还白拿一份脆薯饼。价格错一位数就是事故——所以算术交给确定性代码，不靠大模型心算。
+
 **Mc. Saving**是参加「麦当劳程序员创意开发大赛」的开源 Skill：基于麦当劳官方 **MCP** 能力，帮你把"怎么点最便宜"算得清清楚楚。它拉取实时菜单与四路券池，用确定性优化器算出合规最低价组合，再用 `calculate-price` 核价，最后可以一键下单。
 
-本项目由 WorkBuddy 辅助开发。
+本项目由 **腾讯 WorkBuddy**（大赛官方合作伙伴）开发，天然符合 WorkBuddy 专项奖励条件。
+
+## 可视化界面（H5 + 微信小程序）
+
+不想敲命令行？本项目配套两套**可直接交互**的可视化界面，底层共用同一套确定性优化器（与 Python 自测结果完全一致）：
+
+- **H5 网页版**（`app/`）：手机浏览器直接打开，点选餐品 → 实时算最省组合，支持「点名最省」「预算内最值」两种模式。在微信里也能打开，适合分享冲 Star。
+- **微信小程序**（`miniprogram/`）：用微信开发者工具导入即可预览/发布，界面与 H5 一致。
+
+<p align="center">
+  <img src="./app_preview.svg" alt="Mc. Saving 界面预览" width="300">
+</p>
+
+### 本地运行 H5
+```bash
+cd app
+python3 -m http.server 8080
+# 浏览器打开 http://localhost:8080
+```
+
+### 运行微信小程序
+1. 微信开发者工具 → 导入项目 → 选择本仓库 `miniprogram/` 目录；
+2. AppID 可先用「测试号」（`project.config.json` 已填 `touristappid`），正式发布再替换为你自己的 AppID；
+3. 编译即可在模拟器看到界面，真机预览用微信扫二维码。
+
+> 两套界面均使用 `shared/` 下同一份算法（`optimizer.js` + `sample_data.js`），内置真实样例数据，**纯前端、零依赖、无需 Token 即可体验完整交互**。
 
 ---
 
@@ -41,11 +72,12 @@
 启用 `mcd-mcp` 后即可在对话框直接说需求。
 
 ### 3. 离线运行优化器（无需 Token）
+仓库已附带离线样例 `optimizer/demo_meals.json` 与 `optimizer/demo_coupons.json`，可直接复现上面的截图：
 ```bash
 cd optimizer
-python optimizer.py --selftest          # 10 项自测
-python optimizer.py --meals meals.json --coupons coupons.json --wishlist "big_mac,mid_fries,mid_coke"
-python optimizer.py --meals meals.json --coupons coupons.json --budget 30
+python optimizer.py --selftest                                                              # 10 项自测（截图上半部分）
+python optimizer.py --meals demo_meals.json --coupons demo_coupons.json --wishlist "big_mac,mid_fries,mid_coke"   # 点名最省
+python optimizer.py --meals demo_meals.json --coupons demo_coupons.json --budget 30          # 预算内最值
 ```
 > 真实使用时，`meals.json` 来自 MCP `query-meals`（需 `storeCode`），`coupons.json` 来自 `auto-bind-coupons` / `available-coupons` / `query-my-coupons` / `query-store-coupons` 四路合并（前三路无需 `storeCode`）。
 
@@ -75,9 +107,28 @@ mc-saving/
 ├── mcp-config.example.json     # 脱敏 MCP 配置（仅占位符）
 ├── workbuddy.md                # WorkBuddy 专项奖励所需开发上下文
 ├── LIVE_DEMO.md                # 真实 MCP 取数演示快照（实测证据）
+├── demo_screenshot.svg         # 真实跑通终端截图（README 展示用）
+├── app_preview.svg             # H5/小程序 界面预览图（README 展示用）
+├── make_screenshot.py          # 生成终端截图的脚本（零依赖）
+├── make_app_preview.py         # 生成界面预览图的脚本（零依赖）
+├── shared/                     # 跨端共享算法（H5 与小程序共用，零依赖）
+│   ├── optimizer.js            # 确定性价格优化器（JS 移植，与 Python 行为一致）
+│   └── sample_data.js          # 内置真实样例菜单与券
+├── app/                        # H5 网页版（可视化界面）
+│   ├── index.html
+│   ├── app.css
+│   └── app.js
+├── miniprogram/                # 微信小程序工程（可视化界面）
+│   ├── app.js / app.json / app.wxss
+│   ├── project.config.json     # 已填测试号 touristappid
+│   ├── sitemap.json
+│   ├── utils/                  # 复制自 shared/ 的算法
+│   └── pages/index/            # 首页四件套（wxml/wxss/js/json）
 └── optimizer/
-    ├── optimizer.py            # 确定性价格优化器（核心）
+    ├── optimizer.py            # 确定性价格优化器（核心，Python 版）
     ├── sample_data.py          # 离线样例菜单与券
+    ├── demo_meals.json         # 离线样例菜单（截图演示用 fixtures）
+    ├── demo_coupons.json       # 离线样例券池（截图演示用 fixtures）
     ├── selftest.py             # 10 项自测
     ├── mcp_client.py           # 最小化麦当劳 MCP 客户端（纯标准库）
     └── live_proof.py           # 真实取数 → 优化器 端到端演示

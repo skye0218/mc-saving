@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="860" height="588" viewBox="0 0 860 588" font-family="Consolas, 'Microsoft YaHei', 'PingFang SC', monospace">
+<rect x="0" y="0" width="860" height="588" rx="12" fill="#0d1117"/>
+<rect x="0" y="0" width="860" height="34" rx="12" fill="#161b22"/>
+<rect x="0" y="17" width="860" height="17" fill="#161b22"/>
+<circle cx="22" cy="17" r="6" fill="#ff5f56"/>
+<circle cx="44" cy="17" r="6" fill="#ffbd2e"/>
+<circle cx="66" cy="17" r="6" fill="#27c93f"/>
+<text x="430.0" y="22" fill="#8b949e" font-size="13" text-anchor="middle" xml:space="preserve">Mc. Saving — 真实运行输出 (offline demo)</text>
+<text x="22" y="44" fill="#7ee787" font-size="13" xml:space="preserve">$&#160;python&#160;optimizer/optimizer.py&#160;--selftest</text>
+<text x="22" y="64" fill="#c9d1d9" font-size="13" xml:space="preserve">Mc.&#160;Saving&#160;自测开始&#160;...</text>
+<text x="22" y="84" fill="#c9d1d9" font-size="13" xml:space="preserve">&#160;&#160;[PASS]&#160;巨无霸原价=24.50</text>
+<text x="22" y="104" fill="#c9d1d9" font-size="13" xml:space="preserve">&#160;&#160;[PASS]&#160;买巨无霸送脆薯饼(gift)</text>
+<text x="22" y="124" fill="#c9d1d9" font-size="13" xml:space="preserve">&#160;&#160;[PASS]&#160;组合价低于直选(base=36.5)</text>
+<text x="22" y="144" fill="#c9d1d9" font-size="13" xml:space="preserve">&#160;&#160;[PASS]&#160;组合价使用了&#160;bundle_11</text>
+<text x="22" y="164" fill="#c9d1d9" font-size="13" xml:space="preserve">&#160;&#160;[PASS]&#160;中杯可乐单品券后=9.9</text>
+<text x="22" y="184" fill="#c9d1d9" font-size="13" xml:space="preserve">&#160;&#160;[PASS]&#160;wishlist&#160;返回&#160;1&#160;个方案</text>
+<text x="22" y="204" fill="#c9d1d9" font-size="13" xml:space="preserve">&#160;&#160;[PASS]&#160;wishlist&#160;方案含全部点名单品</text>
+<text x="22" y="224" fill="#c9d1d9" font-size="13" xml:space="preserve">&#160;&#160;[PASS]&#160;预算20内有方案</text>
+<text x="22" y="244" fill="#c9d1d9" font-size="13" xml:space="preserve">&#160;&#160;[PASS]&#160;预算20方案均不超预算</text>
+<text x="22" y="264" fill="#c9d1d9" font-size="13" xml:space="preserve">&#160;&#160;[PASS]&#160;结果确定性(同输入同输出)</text>
+<text x="22" y="284" fill="#c9d1d9" font-size="13" xml:space="preserve"></text>
+<text x="22" y="304" fill="#c9d1d9" font-size="13" xml:space="preserve">自测完成：10&#160;通过&#160;/&#160;0&#160;失败</text>
+<text x="22" y="330" fill="#7ee787" font-size="13" xml:space="preserve">$&#160;python&#160;optimizer/optimizer.py&#160;--meals&#160;optimizer/demo_meals.json&#160;--coupons&#160;optimizer/demo_coupons.json&#160;--wishlist&#160;big_mac,mid_fries,mid_coke</text>
+<text x="22" y="350" fill="#c9d1d9" font-size="13" xml:space="preserve">方案&#160;1（应付&#160;¥31.40）</text>
+<text x="22" y="370" fill="#c9d1d9" font-size="13" xml:space="preserve">&#160;&#160;-&#160;巨无霸&#160;x1&#160;(¥24.50/份)</text>
+<text x="22" y="390" fill="#c9d1d9" font-size="13" xml:space="preserve">&#160;&#160;-&#160;中薯条&#160;x1&#160;(¥12.00/份)</text>
+<text x="22" y="410" fill="#c9d1d9" font-size="13" xml:space="preserve">&#160;&#160;-&#160;中杯可乐&#160;x1&#160;(¥10.50/份)</text>
+<text x="22" y="430" fill="#ffd866" font-size="13" xml:space="preserve">&#160;&#160;-&#160;【赠品】脆薯饼&#160;x1&#160;(免费)</text>
+<text x="22" y="450" fill="#79c0ff" font-size="13" xml:space="preserve">&#160;&#160;应付总价：¥31.40</text>
+<text x="22" y="470" fill="#c9d1d9" font-size="13" xml:space="preserve">&#160;&#160;已用券：bundle_11,&#160;full35_7,&#160;gift_bigmac</text>
+<text x="22" y="490" fill="#c9d1d9" font-size="13" xml:space="preserve">&#160;&#160;说明：已含你点名的全部单品，并在此基础上套用最优券组合</text>
+<text x="22" y="510" fill="#c9d1d9" font-size="13" xml:space="preserve"></text>
+<text x="22" y="530" fill="#ffd866" font-size="13" xml:space="preserve">list&#160;price:&#160;¥47.00&#160;&#160;&#160;optimized:&#160;¥31.40&#160;&#160;&#160;saved:&#160;¥15.60</text>
+<text x="22" y="550" fill="#c9d1d9" font-size="13" xml:space="preserve">free&#160;gift&#160;:&#160;脆薯饼</text>
+</svg>

@@ -13,9 +13,7 @@ Page({
     menuList: [],
     couponList: [],
     activeTab: "wish",
-    budget: "20",
     result: null,
-    budgetResult: [],
     kindName: {
       item_price: "单品价", percent: "折扣",
       threshold: "满减", bundle_price: "组合价", free_gift: "赠品"
@@ -124,26 +122,6 @@ Page({
     if (!codes.length) { wx.showToast({ title: "先勾选想吃的", icon: "none" }); return; }
     const plan = M.cheapestForWishlist(codes, this.menu, this.coupons)[0];
     this.setData({ result: this.buildPlan(plan) });
-  },
-
-  onBudgetInput(e) {
-    this.setData({ budget: e.detail.value });
-  },
-
-  computeBudget() {
-    const b = parseFloat(this.data.budget);
-    if (!(b > 0)) { wx.showToast({ title: "请输入有效预算", icon: "none" }); return; }
-    const plans = M.budgetCombos(this.menu, this.coupons, b, 3);
-    const list = plans.map((p, i) => {
-      const names = M.planLines(p, this.menu).map(function (l) {
-        return l.name + (l.gift ? "(赠)" : "");
-      }).join(" + ");
-      const used = (p.usedCoupons || []).map((id) => {
-        return this.couponMap[id] ? this.couponMap[id].desc : id;
-      }).join("、");
-      return { idx: i + 1, total: p.total.toFixed(2), names: names, saved: p.saved.toFixed(2), used: used || "无" };
-    });
-    this.setData({ budgetResult: list });
   },
 
   // 下单：复制清单并尝试跳转到麦当劳官方小程序

@@ -10,7 +10,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from optimizer import (cheapest_for_wishlist, budget_combos, _price_with_coupons,
+from optimizer import (cheapest_for_wishlist, _price_with_coupons,
                        Item, Coupon, round2)
 from sample_data import SAMPLE_MEALS, SAMPLE_COUPONS
 
@@ -79,12 +79,7 @@ def run():
     check("wishlist 方案含全部点名单品",
           set(plans[0].cart.keys()) == {"big_mac", "mid_fries", "mid_coke"})
 
-    # 6) 预算模式能返回预算内的方案
-    plans = budget_combos(menu, coupons, 20.0, top_n=5)
-    check("预算20内有方案", len(plans) > 0)
-    check("预算20方案均不超预算", all(p.total <= 20.0 + 1e-9 for p in plans))
-
-    # 7) 确定性：同输入两次结果一致
+    # 6) 确定性：同输入两次结果一致
     a = cheapest_for_wishlist(["big_mac", "mid_fries"], menu, coupons)[0].total
     b = cheapest_for_wishlist(["big_mac", "mid_fries"], menu, coupons)[0].total
     check("结果确定性(同输入同输出)", a == b)

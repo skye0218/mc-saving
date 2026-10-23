@@ -7,6 +7,11 @@
   <img src="./demo_screenshot.svg" alt="Mc. Saving 真实跑通截图" width="720">
 </p>
 
+<p align="center">
+  <a href="https://mc-saving.app.workbuddy.host/?sharecode=WTUKK3ABZT"><b>🌐 在线演示（H5 网页版）· 手机/微信直接打开</b></a><br>
+  <sub>由 WorkBuddy 应用托管，长期有效 · 无需安装，点开即用</sub>
+</p>
+
 **它能替你省多少？** 实测：点"巨无霸 + 中薯条 + 中杯可乐"，直购 **¥47.00**，优化后 **¥31.40**，立省 **¥15.60**，还白拿一份脆薯饼。价格错一位数就是事故——所以算术交给确定性代码，不靠大模型心算。
 
 **Mc. Saving**是参加「麦当劳程序员创意开发大赛」的开源 Skill：基于麦当劳官方 **MCP** 能力，帮你把"怎么点最便宜"算得清清楚楚。它拉取实时菜单与四路券池，用确定性优化器算出合规最低价组合，再用 `calculate-price` 核价，最后可以一键下单。
@@ -17,7 +22,7 @@
 
 不想敲命令行？本项目配套两套**可直接交互**的可视化界面，底层共用同一套确定性优化器（与 Python 自测结果完全一致）：
 
-- **H5 网页版**（`app/`）：手机浏览器直接打开，点选餐品 → 实时算最省组合，支持「点名最省」「预算内最值」两种模式。在微信里也能打开，适合分享冲 Star。
+- **H5 网页版**（`app/`）：手机浏览器直接打开，点选餐品 → 实时算最省组合，支持「点名最省」「预算内最值」两种模式。在微信里也能打开，适合分享冲 Star。🌐 在线体验：[mc-saving.app.workbuddy.host](https://mc-saving.app.workbuddy.host/?sharecode=WTUKK3ABZT)
 - **微信小程序**（`miniprogram/`）：用微信开发者工具导入即可预览/发布，界面与 H5 一致。
 
 <p align="center">

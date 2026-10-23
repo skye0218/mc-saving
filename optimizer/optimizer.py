@@ -241,34 +241,6 @@ def cheapest_for_wishlist(wishlist: List[str], menu: Dict[str, Item],
     return [plan]
 
 
-def budget_combos(menu: Dict[str, Item], coupons: List[Coupon],
-                 budget: float, top_n: int = 5) -> List[Plan]:
-    """
-    预算内最值：在 ¥budget 以内，尽量把这笔钱花得值。
-    枚举 1~4 件组合（菜单规模下完全可行），取券后价 <= budget 的方案，
-    排序优先级：① 券后总价尽量贴近预算（不浪费、吃得丰盛）；② 同档下省得越多越靠前；③ 件数更多优先。
-    """
-    codes = list(menu.keys())
-    max_items = 4 if len(codes) >= 4 else len(codes)
-    candidates: List[Dict[str, int]] = []
-    for d in range(1, max_items + 1):
-        for grp in itertools.combinations(codes, d):
-            candidates.append({c: 1 for c in grp})
-
-    plans: List[Plan] = []
-    for cart in candidates:
-        total, used, gifts, steps, tried = _price_with_coupons(cart, menu, coupons)
-        if total <= budget + 1e-9:
-            original = sum(menu[code].price * qty for code, qty in cart.items())
-            saved = round2(original - total)
-            plans.append(Plan(cart=cart, total=total, used_coupons=used,
-                             gifts=gifts, steps=steps, tried=tried,
-                             saved=saved,
-                             note=f"原价¥{original:.2f}，省¥{saved:.2f}"))
-    # 券后总价优先（贴近预算） → 省得越多 → 件数越多
-    plans.sort(key=lambda p: (round(p.total * 1000), round(p.saved * 1000), len(p.cart)),
-               reverse=True)
-    return plans[:top_n]
 
 
 def _saved(plan: Plan, menu: Dict[str, Item]) -> float:
@@ -330,7 +302,6 @@ def main():
     ap.add_argument("--meals", help="MCP query-meals 输出的 JSON 路径")
     ap.add_argument("--coupons", help="MCP 券池输出的 JSON 路径")
     ap.add_argument("--wishlist", help="点名单品 code，逗号分隔")
-    ap.add_argument("--budget", type=float, help="预算上限（元）")
     ap.add_argument("--top", type=int, default=3)
     ap.add_argument("--selftest", action="store_true", help="运行自测")
     args = ap.parse_args()
@@ -350,10 +321,8 @@ def main():
     if args.wishlist:
         wish = [x.strip() for x in args.wishlist.split(",") if x.strip()]
         plans = cheapest_for_wishlist(wish, menu, coupons, args.top)
-    elif args.budget:
-        plans = budget_combos(menu, coupons, args.budget, args.top)
     else:
-        print("请指定 --wishlist 或 --budget。")
+        print("请指定 --wishlist。")
         return
 
     for i, p in enumerate(plans, 1):

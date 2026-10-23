@@ -11,6 +11,16 @@
   coupons.forEach(function (c) { couponMap[c.coupon_id] = c; });
 
   var selected = {}; // code -> true
+  var currentPlan = null; // 最近一次算出的方案，供下单使用
+
+  // —— 下单跳转目标（按需替换）——
+  // 麦当劳官方小程序 AppID（金拱门(中国)有限公司），正式跳转前请替换为真实 AppID，
+  // 并在「微信公众平台 → 开发 → 开发管理 → 配置」把官方 AppID 加入互相调用的白名单。
+  var MCD_OFFICIAL_APPID = "wxMCD_OFFICIAL_APPID";
+  // 官方小程序「点餐/下单确认」页面路径（默认首页，按官方实际路径替换）。
+  var MCD_ORDER_PATH = "pages/index/index";
+  // 可选：由后端生成的微信 URL Scheme（正式环境用，自动拉起小程序）。留空则走提示兜底。
+  var MCD_URL_SCHEME = "";
 
   // 渲染菜单
   var grid = document.getElementById("menu-grid");
@@ -177,7 +187,113 @@
     if (codes.length === 0) { alert("先勾选至少一样想吃的～"); return; }
     var plan = M.cheapestForWishlist(codes, menu, coupons)[0];
     if (!plan) { alert("没有可计算的项目"); return; }
+    currentPlan = plan;
     showResult(renderPlan(plan));
+    showOrder(plan);
+  });
+
+  // —— 下单相关 ——
+  function cartBase(plan) {
+    var b = 0;
+    for (var code in plan.cart) b += menu[code].price * plan.cart[code];
+    return b;
+  }
+
+  function buildOrderInfo(plan) {
+    var items = M.planLines(plan, menu).map(function (l) {
+      return { name: l.name, qty: l.qty, price: l.price, gift: !!l.gift };
+    });
+    var used = (plan.usedCoupons || []).map(function (id) {
+      return couponMap[id] ? couponMap[id].desc : id;
+    });
+    var base = cartBase(plan);
+    return {
+      items: items, total: plan.total, base: base,
+      saved: M.round2(base - plan.total), used: used
+    };
+  }
+
+  function showOrder(plan) {
+    var info = buildOrderInfo(plan);
+    var rows = info.items.map(function (it) {
+      return '<div class="o-line"><span>' + it.name +
+        (it.gift ? "（赠）" : "") + (it.qty > 1 ? " ×" + it.qty : "") +
+        '</span><span class="price">' + (it.gift ? "免费" : "¥" + it.price.toFixed(2)) + "</span></div>";
+    }).join("");
+    var used = info.used.length ? info.used.join("、") : "无";
+    document.getElementById("order-summary").innerHTML =
+      '<div class="o-lines">' + rows + "</div>" +
+      '<div class="o-total">应付 <b>¥' + info.total.toFixed(2) + "</b>　直购 ¥" +
+      info.base.toFixed(2) + "　立省 ¥" + info.saved.toFixed(2) + "</div>" +
+      '<div class="o-coupons">已用券：' + used + "</div>";
+    document.getElementById("order-panel").classList.remove("hidden");
+    document.getElementById("order-panel").scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  var currentOrderText = "";
+  function formatOrderText(info) {
+    var lines = info.items.map(function (it) {
+      return "· " + it.name + (it.qty > 1 ? " ×" + it.qty : "") +
+        (it.gift ? "（赠品）" : " ¥" + it.price.toFixed(2));
+    });
+    return "【Mc. Saving 最优下单清单】\n" + lines.join("\n") +
+      "\n应付：¥" + info.total.toFixed(2) + "（直购 ¥" + info.base.toFixed(2) +
+      "，省 ¥" + info.saved.toFixed(2) + "）\n已用券：" +
+      (info.used.length ? info.used.join("、") : "无") +
+      "\n请到麦当劳官方小程序按此清单点单并使用对应券。";
+  }
+
+  function copyText(t) {
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(t); return true;
+      }
+    } catch (e) {}
+    try {
+      var ta = document.createElement("textarea");
+      ta.value = t; ta.style.position = "fixed"; ta.style.left = "-9999px";
+      document.body.appendChild(ta); ta.select();
+      document.execCommand("copy"); document.body.removeChild(ta); return true;
+    } catch (e) { return false; }
+  }
+
+  function closeModal() { document.getElementById("order-modal").classList.add("hidden"); }
+
+  function openOrderModal() {
+    if (!currentPlan) return;
+    var info = buildOrderInfo(currentPlan);
+    currentOrderText = formatOrderText(info);
+    var linesHtml = info.items.map(function (it) {
+      return "<div>" + it.name + (it.qty > 1 ? " ×" + it.qty : "") +
+        (it.gift ? "（赠品）" : " ¥" + it.price.toFixed(2)) + "</div>";
+    }).join("");
+    document.getElementById("modal-body").innerHTML =
+      '<div class="m-order">' + linesHtml + "</div>" +
+      '<div class="m-total">应付 <b>¥' + info.total.toFixed(2) + "</b> · 省 ¥" +
+      info.saved.toFixed(2) + "</div>" +
+      '<div class="m-note">已自动复制清单。跳转后按此点单，并使用上方算好的券。</div>' +
+      '<div class="m-meta">官方小程序 AppID：<code>' + MCD_OFFICIAL_APPID +
+      "</code><br>下单页路径：<code>" + MCD_ORDER_PATH + "</code></div>";
+    copyText(currentOrderText);
+    document.getElementById("order-modal").classList.remove("hidden");
+  }
+
+  function jumpToOfficial() {
+    if (MCD_URL_SCHEME) { window.location.href = MCD_URL_SCHEME; return; }
+    var inWeChat = /MicroMessenger/i.test(navigator.userAgent);
+    alert(inWeChat
+      ? "即将打开麦当劳官方小程序（需配置签名 URL Scheme）。\n当前为演示环境：请在微信搜索『麦当劳』小程序，按清单点单。"
+      : "请先用手机微信打开本页，再点「打开小程序」即可跳转；或直接微信搜索『麦当劳』小程序按清单点单。");
+  }
+
+  document.getElementById("btn-order").addEventListener("click", openOrderModal);
+  document.getElementById("modal-open").addEventListener("click", jumpToOfficial);
+  document.getElementById("modal-copy").addEventListener("click", function () {
+    alert(copyText(currentOrderText) ? "已复制下单清单" : "复制失败，请手动记录");
+  });
+  document.getElementById("modal-close").addEventListener("click", closeModal);
+  document.getElementById("order-modal").addEventListener("click", function (e) {
+    if (e.target === this) closeModal();
   });
 
   // 预算内最值

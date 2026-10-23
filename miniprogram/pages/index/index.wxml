@@ -36,7 +36,7 @@
 
   <!-- 预算模式 -->
   <view class="panel" wx:if="{{activeTab==='budget'}}">
-    <view class="hint">设定预算上限，找出「最超值」的搭配（按省得最多排序）。</view>
+    <view class="hint">设定预算上限，在预算内尽量花得值：券后总价贴近预算、吃得丰盛、还省得多（预算越高，方案越丰盛）。</view>
     <view class="budget-row">
       <text class="yen">¥</text>
       <input class="binput" type="digit" value="{{budget}}" bindinput="onBudgetInput" />

@@ -1,0 +1,16 @@
+# 本地配置 / Token —— 绝不可提交
+.mcd_token.local
+local_token.txt
+.env
+.env.*
+*.local
+mcp-config.json
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# 调试临时文件
+_raw_*.txt

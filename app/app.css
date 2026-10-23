@@ -113,15 +113,6 @@ body {
 .cta:active { transform: scale(.98); }
 .cta.inline { width: auto; margin: 0; padding: 12px 18px; font-size: 15px; }
 
-/* Budget */
-.budget-row { display: flex; align-items: center; gap: 8px; }
-.yen { font-size: 22px; font-weight: 800; color: var(--red); }
-#budget-input {
-  flex: 1; font-size: 22px; font-weight: 800; border: 2px solid var(--line);
-  border-radius: 12px; padding: 10px 12px; width: 100%; outline: none;
-}
-#budget-input:focus { border-color: var(--red); }
-
 /* Coupons */
 .coupons { display: flex; flex-direction: column; gap: 8px; }
 .coupon {
@@ -167,15 +158,6 @@ body {
 .ex-flow b { color: var(--red-d); }
 .ex-save { color: var(--green); font-weight: 800; white-space: nowrap; }
 .ex-note { margin-top: 8px; font-size: 11.5px; color: var(--muted); line-height: 1.5; background: #faf6ef; border-radius: 8px; padding: 8px 10px; }
-
-/* Budget result cards */
-.bcard {
-  border: 1px solid var(--line); border-radius: 14px; padding: 12px; margin-bottom: 10px;
-  background: #fff;
-}
-.bcard .bt { font-size: 15px; font-weight: 800; color: var(--red-d); }
-.bcard .blines { font-size: 13px; color: var(--ink); margin: 6px 0; }
-.bcard .bsave { font-size: 13px; color: var(--green); font-weight: 700; }
 
 /* Footer */
 .ft { text-align: center; font-size: 11.5px; color: var(--muted); margin-top: 6px; padding: 0 10px; }

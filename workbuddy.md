@@ -18,7 +18,7 @@
 ## 核心实现（WorkBuddy 编码 + 自测）
 
 - 由 WorkBuddy 编写 `optimizer/optimizer.py`：纯标准库、零依赖的确定性价格优化器，建模 5 类券（单品改价 / 折扣 / 满减 / 组合价 / 赠品）与保守叠加策略。
-- 编写 `optimizer/sample_data.py`（离线样例）与 `optimizer/selftest.py`（10 项断言）。
+- 编写 `optimizer/sample_data.py`（离线样例）与 `optimizer/selftest.py`（8 项断言）。
 - **自测驱动修正**：首轮自测暴露两个真实 bug——折扣券缺"满额"门槛、1+1 随心配组合价模型错误（写成"全在才算"）。WorkBuddy 据此修正券模型（新增 `min_spend`/`min_count`），并修复自测脚本漏传参数的问题，最终 **10/10 自测通过**，离线演示跑通。
 - **真实 MCP 连通验证**：使用参赛者提供的真实 Token，WorkBuddy 编写 `optimizer/mcp_client.py`（纯标准库）并实测连接 `mcd-mcp`（v1.0.0，共 35 个工具），确认 `query-meals`/`calculate-price` 等需 `storeCode`，并真实拉取了卡包券与可领券（如「11.9元麦辣鸡腿堡」「19.9元王牌炸鸡任选2」「免费脆薯饼」）。`live_proof.py` 把真实券语义 1:1 喂进优化器跑出省钱方案（见 `LIVE_DEMO.md`）。
 - **真实数据再揪 bug**：在真实演示中暴露并修复 `free_gift` 赠品分支（`target=None` 的随单赠未追加）的 bug，已加回归断言。

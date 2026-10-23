@@ -83,6 +83,7 @@ class Plan:
     gifts: List[str] = field(default_factory=list)  # 赠送单品 code
     steps: List[dict] = field(default_factory=list)  # 逐步结算明细（解释"怎么算出来的"）
     tried: int = 0                                   # 枚举过的券组合数
+    saved: float = 0.0                                # 省下的金额（原价 - 应付）
     note: str = ""
 
 
@@ -243,18 +244,16 @@ def cheapest_for_wishlist(wishlist: List[str], menu: Dict[str, Item],
 def budget_combos(menu: Dict[str, Item], coupons: List[Coupon],
                  budget: float, top_n: int = 5) -> List[Plan]:
     """
-    预算硬约束模式：在 ¥budget 以内，找出最"值"的搭配。
-    枚举单品 / 两两 / 三三组合（菜单规模下完全可行），取券后价 <= budget 的方案，
-    按"总原价 - 实付价"（省得最多）排序。
+    预算内最值：在 ¥budget 以内，尽量把这笔钱花得值。
+    枚举 1~4 件组合（菜单规模下完全可行），取券后价 <= budget 的方案，
+    排序优先级：① 券后总价尽量贴近预算（不浪费、吃得丰盛）；② 同档下省得越多越靠前；③ 件数更多优先。
     """
     codes = list(menu.keys())
+    max_items = 4 if len(codes) >= 4 else len(codes)
     candidates: List[Dict[str, int]] = []
-    for code in codes:
-        candidates.append({code: 1})
-    for a, b in itertools.combinations(codes, 2):
-        candidates.append({a: 1, b: 1})
-    for a, b, c in itertools.combinations(codes, 3):
-        candidates.append({a: 1, b: 1, c: 1})
+    for d in range(1, max_items + 1):
+        for grp in itertools.combinations(codes, d):
+            candidates.append({c: 1 for c in grp})
 
     plans: List[Plan] = []
     for cart in candidates:
@@ -264,8 +263,11 @@ def budget_combos(menu: Dict[str, Item], coupons: List[Coupon],
             saved = round2(original - total)
             plans.append(Plan(cart=cart, total=total, used_coupons=used,
                              gifts=gifts, steps=steps, tried=tried,
+                             saved=saved,
                              note=f"原价¥{original:.2f}，省¥{saved:.2f}"))
-    plans.sort(key=lambda p: _saved(p, menu), reverse=True)
+    # 券后总价优先（贴近预算） → 省得越多 → 件数越多
+    plans.sort(key=lambda p: (round(p.total * 1000), round(p.saved * 1000), len(p.cart)),
+               reverse=True)
     return plans[:top_n]
 
 
